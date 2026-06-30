@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy Football Draft Order</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f1923;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  h1 {
+    font-size: 1.8rem;
+    color: #00d4aa;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .subtitle {
+    color: #7a8a99;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+  }
+  .btn {
+    background: #00d4aa;
+    color: #0f1923;
+    border: none;
+    padding: 14px 36px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-bottom: 32px;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { background: #00bfa0; transform: scale(1.03); }
+  .btn:active { transform: scale(0.98); }
+  .roster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    max-width: 600px;
+    margin-bottom: 36px;
+  }
+  .tag {
+    background: #1e2d3d;
+    border: 1px solid #2a3f55;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    color: #aab8c5;
+  }
+  .tag span { color: #00d4aa; font-weight: 700; margin-right: 5px; }
+  .results {
+    width: 100%;
+    max-width: 480px;
+  }
+  .pick {
+    display: flex;
+    align-items: center;
+    background: #1a2a38;
+    border: 1px solid #243447;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 14px 18px;
+    animation: slideIn 0.4s ease both;
+    gap: 16px;
+  }
+  .pick:nth-child(1) { animation-delay: 0.05s; }
+  .pick:nth-child(2) { animation-delay: 0.10s; }
+  .pick:nth-child(3) { animation-delay: 0.15s; }
+  .pick:nth-child(4) { animation-delay: 0.20s; }
+  .pick:nth-child(5) { animation-delay: 0.25s; }
+  .pick:nth-child(6) { animation-delay: 0.30s; }
+  .pick:nth-child(7) { animation-delay: 0.35s; }
+  .pick:nth-child(8) { animation-delay: 0.40s; }
+  .pick:nth-child(9) { animation-delay: 0.45s; }
+  .pick:nth-child(10) { animation-delay: 0.50s; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .pick-num {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #00d4aa;
+    min-width: 36px;
+    text-align: center;
+  }
+  .pick-num.gold  { color: #ffd700; }
+  .pick-num.silver{ color: #c0c0c0; }
+  .pick-num.bronze{ color: #cd7f32; }
+  .pick-info { flex: 1; }
+  .pick-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #e8f0f7;
+  }
+  .pick-id {
+    font-size: 0.78rem;
+    color: #5a7a90;
+    margin-top: 2px;
+  }
+  .badge {
+    font-size: 0.75rem;
+    background: #0f2535;
+    border: 1px solid #1f4060;
+    border-radius: 20px;
+    padding: 3px 10px;
+    color: #4db8ff;
+  }
+  .badge.on-clock {
+    background: #1a3a20;
+    border-color: #2a6030;
+    color: #4dff88;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<h1>🏈 Fantasy Football Draft</h1>
+<p class="subtitle">10-Team League &mdash; Randomized Draft Order</p>
+
+<div class="roster" id="roster"></div>
+
+<button class="btn" onclick="randomize()">🔀 Randomize Draft Order</button>
+
+<div class="results" id="results"></div>
+
+<script>
+const players = [
+  { id: 1,  name: "Imad"  },
+  { id: 2,  name: "Fateh" },
+  { id: 3,  name: "Z"     },
+  { id: 4,  name: "Masud" },
+  { id: 5,  name: "Aman"  },
+  { id: 6,  name: "Kyle"  },
+  { id: 7,  name: "Qais"  },
+  { id: 8,  name: "Ermin" },
+  { id: 9,  name: "Suraj" },
+  { id: 10, name: "Asmir" },
+];
+
+// Render roster badges
+const roster = document.getElementById('roster');
+players.forEach(p => {
+  const tag = document.createElement('div');
+  tag.className = 'tag';
+  tag.innerHTML = `<span>#${p.id}</span>${p.name}`;
+  roster.appendChild(tag);
+});
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function randomize() {
+  const order = shuffle(players);
+  const results = document.getElementById('results');
+  results.innerHTML = '';
+
+  order.forEach((p, i) => {
+    const pick = i + 1;
+    const div = document.createElement('div');
+    div.className = 'pick';
+
+    let numClass = '';
+    if (pick === 1) numClass = 'gold';
+    else if (pick === 2) numClass = 'silver';
+    else if (pick === 3) numClass = 'bronze';
+
+    const badge = pick === 1
+      ? `<div class="badge on-clock">🟢 On the Clock</div>`
+      : `<div class="badge">Pick ${pick}</div>`;
+
+    div.innerHTML = `
+      <div class="pick-num ${numClass}">${pick}</div>
+      <div class="pick-info">
+        <div class="pick-name">${p.name}</div>
+        <div class="pick-id">Player #${p.id}</div>
+      </div>
+      ${badge}
+    `;
+    results.appendChild(div);
+  });
+}
+
+// Auto-run on load
+randomize();
+</script>
+</body>
+</html>
